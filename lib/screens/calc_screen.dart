@@ -240,17 +240,17 @@ class _CalcScreenState extends State<CalcScreen> {
         Text('📋 配药方案', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold))]),
       const Divider(height: 20),
       _row('药品', r.drug.name),
-      _row('剂量', '${r.selectedDose.toStringAsFixed(r.isIu ? 0 : 1)} ${r.isIu ? "IU/kg" : r.doseUnit}'),
-      _row('需药量', '${r.requiredAmount.toStringAsFixed(r.isIu ? 0 : 2)} $doseLabel'),
+      _row('剂量', '${r.selectedDose.toStringAsFixed(0)} ${r.isIu ? "IU/kg" : r.doseUnit}'),
+      _row('需药量', '${r.requiredAmount.toStringAsFixed(1)} $doseLabel'),
       _row('药片规格', '${r.drugStrength.toStringAsFixed(1)} $unit/片'),
       const Divider(height: 16),
       Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(8)), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('① 取 ${r.tabletsNeeded} 片（${r.isIu ? r.actualAmount.toStringAsFixed(0) : r.actualAmount.toStringAsFixed(1)}$unit），研碎', style: const TextStyle(fontSize: 15)),
+        Text('① 取 ${r.tabletsNeeded} 片（${r.actualAmount.toStringAsFixed(1)}$unit），研碎', style: const TextStyle(fontSize: 15)),
         const SizedBox(height: 6),
         Text('② 加水 ${r.waterVolumeMl.toStringAsFixed(2)} mL，搅拌溶解', style: const TextStyle(fontSize: 15)),
         Text('   （用秤称 ${r.waterVolumeMl.toStringAsFixed(2)}g 水即可）', style: const TextStyle(fontSize: 12, color: Colors.grey)),
         const SizedBox(height: 6),
-        Text('③ 药液浓度: ${r.concentration.toStringAsFixed(r.isIu ? 0 : 1)} $unit/mL', style: const TextStyle(fontSize: 14)),
+        Text('③ 药液浓度: ${r.concentration.toStringAsFixed(1)} $unit/mL', style: const TextStyle(fontSize: 14)),
         const SizedBox(height: 10),
         Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(
           color: r.isOverLimit ? Colors.red.shade50 : Colors.green.shade50, borderRadius: BorderRadius.circular(8)),
@@ -259,7 +259,7 @@ class _CalcScreenState extends State<CalcScreen> {
             const SizedBox(width: 8),
             Expanded(child: Text(
               '④ 每次用 1mL 针管抽 ${r.dosePerTimeMl.toStringAsFixed(1)} mL 喂服\n'
-              '   （含 ${r.isIu ? r.actualDoseAmount.toStringAsFixed(0) : r.actualDoseAmount.toStringAsFixed(1)}$doseLabel）',
+              '   （含 ${r.actualDoseAmount.toStringAsFixed(1)}$doseLabel）',
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: r.isOverLimit ? Colors.red.shade800 : Colors.green.shade800))),
           ]),
         ),
