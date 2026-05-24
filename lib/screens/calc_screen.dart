@@ -112,9 +112,30 @@ class _CalcScreenState extends State<CalcScreen> {
                               IconButton(
                                 icon: Icon(isExpanded ? Icons.expand_less : Icons.info_outline,
                                     size: 20, color: Colors.teal),
-                                onPressed: () => setSheetState(() {
-                                  _expandedDrug = isExpanded ? null : d;
-                                }),
+                                onPressed: () {
+                                  setSheetState(() {
+                                    _expandedDrug = isExpanded ? null : d;
+                                  });
+                                  // 展开后仅在内容超出可见区域时才滚动
+                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    final idx = _filteredDrugs.indexOf(d);
+                                    if (idx < 0 || !scrollCtrl.hasClients) return;
+                                    const itemH = 86.0;   // 卡片折叠时高度
+                                    const extraH = 190.0; // 展开额外高度
+                                    final top = idx * itemH;
+                                    final bottom = top + itemH + extraH;
+                                    final viewTop = scrollCtrl.offset;
+                                    final viewBottom = viewTop + scrollCtrl.position.viewportDimension;
+                                    if (bottom > viewBottom) {
+                                      final target = bottom - viewBottom + viewTop + 10;
+                                      scrollCtrl.animateTo(
+                                        target.clamp(0, scrollCtrl.position.maxScrollExtent),
+                                        duration: const Duration(milliseconds: 300),
+                                        curve: Curves.easeInOut,
+                                      );
+                                    }
+                                  });
+                                },
                               ),
                             ChoiceChip(label: Text('✓ 选择', style: const TextStyle(fontSize: 11)),
                               selected: false, onSelected: (_) => _selectDrug(d)),
