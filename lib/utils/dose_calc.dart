@@ -50,8 +50,8 @@ class DoseResult {
   String get note {
     if (isOverLimit) return '⚠️ 超过安全上限 ${maxOralMl}mL！';
     double ratio = actualDoseAmount / requiredAmount;
-    if (ratio > 1.2) return '💡 每次 ${dosePerTimeMl}mL 含药 ${actualDoseAmount.toStringAsFixed(0)}${_unit}（略超）';
-    if (ratio < 0.8) return '💡 每次 ${dosePerTimeMl}mL 含药 ${actualDoseAmount.toStringAsFixed(0)}${_unit}（略不足）';
+    if (ratio > 1.2) return '💡 每次 ${dosePerTimeMl}mL 含药 ${actualDoseAmount.toStringAsFixed(1)}${_unit}（略超）';
+    if (ratio < 0.8) return '💡 每次 ${dosePerTimeMl}mL 含药 ${actualDoseAmount.toStringAsFixed(1)}${_unit}（略不足）';
     return '';
   }
 

@@ -240,7 +240,7 @@ class _CalcScreenState extends State<CalcScreen> {
         Text('📋 配药方案', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold))]),
       const Divider(height: 20),
       _row('药品', r.drug.name),
-      _row('剂量', '${r.selectedDose.toStringAsFixed(0)} ${r.isIu ? "IU/kg" : r.doseUnit}'),
+      _row('剂量', '${r.selectedDose.toStringAsFixed(r.isIu ? 0 : 1)} ${r.isIu ? "IU/kg" : r.doseUnit}'),
       _row('需药量', '${r.requiredAmount.toStringAsFixed(1)} $doseLabel'),
       _row('药片规格', '${r.drugStrength.toStringAsFixed(1)} $unit/片'),
       const Divider(height: 16),
