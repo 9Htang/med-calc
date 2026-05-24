@@ -70,37 +70,78 @@ class _CalcScreenState extends State<CalcScreen> {
     });
   }
 
+  Drug? _expandedDrug;
+
   void _showDrugPicker() {
+    _expandedDrug = null;
     showModalBottomSheet(
       context: context, isScrollControlled: true,
-      builder: (ctx) => DraggableScrollableSheet(
-        initialChildSize: 0.85, expand: false,
-        builder: (_, scrollCtrl) => Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(children: [
-            TextField(
-              controller: _searchCtrl,
-              decoration: const InputDecoration(hintText: '搜索药品名称...', prefixIcon: Icon(Icons.search), border: OutlineInputBorder()),
-              onChanged: _onSearch,
-            ),
-            const SizedBox(height: 8),
-            Expanded(child: ListView.builder(controller: scrollCtrl, itemCount: _filteredDrugs.length, itemBuilder: (_, i) {
-              final d = _filteredDrugs[i];
-              return ListTile(
-                title: Text(d.name),
-                subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('${d.doseMin}-${d.doseMax} ${d.unit}  |  ${d.route}  |  ${d.birds}', style: const TextStyle(fontSize: 12)),
-                  if (d.note.isNotEmpty) Row(children: [
-                    Icon(Icons.info_outline, size: 12, color: Colors.orange.shade600),
-                    const SizedBox(width: 3),
-                    Flexible(child: Text(d.note, style: TextStyle(fontSize: 11, color: Colors.orange.shade600))),
-                  ]),
-                ]),
-                trailing: Chip(label: Text(d.category, style: const TextStyle(fontSize: 11))),
-                onTap: () => _selectDrug(d),
-              );
-            })),
-          ]),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheetState) => DraggableScrollableSheet(
+          initialChildSize: 0.85, expand: false,
+          builder: (_, scrollCtrl) => Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(children: [
+              TextField(
+                controller: _searchCtrl,
+                decoration: const InputDecoration(hintText: '搜索药品名称...', prefixIcon: Icon(Icons.search), border: OutlineInputBorder()),
+                onChanged: (q) => setSheetState(() => _onSearch(q)),
+              ),
+              const SizedBox(height: 8),
+              Expanded(child: ListView.builder(controller: scrollCtrl, itemCount: _filteredDrugs.length, itemBuilder: (_, i) {
+                final d = _filteredDrugs[i];
+                final isExpanded = _expandedDrug == d;
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 3),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: Text(d.name, style: const TextStyle(fontWeight: FontWeight.w500)),
+                        subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text('${d.doseMin}-${d.doseMax} ${d.unit}  |  ${d.route}  |  ${d.birds}', style: const TextStyle(fontSize: 12)),
+                          if (d.note.isNotEmpty) Row(children: [
+                            Icon(Icons.info_outline, size: 12, color: Colors.orange.shade600),
+                            const SizedBox(width: 3),
+                            Flexible(child: Text(d.note, style: TextStyle(fontSize: 11, color: Colors.orange.shade600))),
+                          ]),
+                        ]),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (d.mechanism.isNotEmpty || d.sideEffects.isNotEmpty)
+                              IconButton(
+                                icon: Icon(isExpanded ? Icons.expand_less : Icons.info_outline,
+                                    size: 20, color: Colors.teal),
+                                onPressed: () => setSheetState(() {
+                                  _expandedDrug = isExpanded ? null : d;
+                                }),
+                              ),
+                            ChoiceChip(label: Text('✓ 选择', style: const TextStyle(fontSize: 11)),
+                              selected: false, onSelected: (_) => _selectDrug(d)),
+                          ],
+                        ),
+                      ),
+                      if (isExpanded)
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (d.mechanism.isNotEmpty) ...[                                const Divider(height: 8),
+                                Text('作用机理', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.teal.shade700)),
+                                const SizedBox(height: 4),
+                                Text(d.mechanism, style: const TextStyle(fontSize: 12)),
+                              ],
+                              if (d.sideEffects.isNotEmpty) ...[                                const SizedBox(height: 8),
+                                Text('副作用', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.orange.shade700)),
+                                const SizedBox(height: 4),
+                                Text(d.sideEffects, style: const TextStyle(fontSize: 12)),
+                              ],                            ],                          ),
+                        ),                    ],                  ),
+                );
+              })),
+            ]),
+          ),
         ),
       ),
     );
